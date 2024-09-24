@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find panda_moveit_config)/launch/demo_gazebo.launch"/>
+    <node name="img_correct" pkg="arm_control" type="img_correct.py" output="screen"/>
+    <node name="red_detect" pkg="arm_control" type="red_detect.py" output="screen"/>
+    <!-- <node name="img2world_to" pkg="arm_control" type="img2world_to.py" output="screen"/> -->
+    <node name="img2world_in" pkg="arm_control" type="img2world_in.py" output="screen"/>
+    <!-- <node name="arm_track" pkg="arm_control" type="arm_track.py" output="screen"/> -->
+</launch>

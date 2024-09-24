@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find cra_moveit_config)/launch/demo.launch"/>
+    <node name="moveit_bringup" pkg="arm_control" type="moveit_bringup.py" output="screen"/>
+    <node name="obstacle" pkg="arm_control" type="obstacle.py" output="screen"/>
+</launch>
