@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: cra_description
+    relative_path: urdf/cr3_robot.xacro.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/cr3_robot.srdf
+  CONFIG:
+    author_name: Twinkling_Titanite
+    author_email: noetic@ros.com
+    generated_timestamp: 1725872816
