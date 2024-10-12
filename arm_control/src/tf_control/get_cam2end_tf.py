@@ -7,7 +7,8 @@ import sys
 import os
 import numpy as np
 from sensor_msgs.msg import CameraInfo
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_in_color import *
@@ -24,10 +25,6 @@ dist_coeffs_ir = None
 object_points = np.zeros((np.prod(chessboard_size), 3), np.float32)
 object_points[:, :2] = np.indices(chessboard_size).T.reshape(-1, 2)
 object_points *= square_size
-
-# 加载Charuco板字典和参数
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
-charuco_board = cv2.aruco.CharucoBoard_create(7, 7, 0.02, 0.014, aruco_dict)
 
 def get_img_num(path):
     img_ext = ['.jpg', '.png', '.jpeg']
@@ -76,16 +73,16 @@ def main():
                      camera_matrix_color,
                      os.getcwd() + cam2end_color_tf_path,
                      'in')
-
-    get_tf.get_cam2_tf(os.getcwd() + camera_in_ir_img_path,
-                     os.getcwd() + camera_in_poses_end_path,
-                     img_ir_num,
-                     os.getcwd() + camera_in_ir_result_path,
-                     object_points,
-                     chessboard_size,
-                     camera_matrix_ir,
-                     os.getcwd() + cam2end_ir_tf_path,
-                     'in')
+    if correct_depth_camera:
+        get_tf.get_cam2_tf(os.getcwd() + camera_in_ir_img_path,
+                           os.getcwd() + camera_in_poses_end_path,
+                           img_ir_num,
+                           os.getcwd() + camera_in_ir_result_path,
+                           object_points,
+                           chessboard_size,
+                           camera_matrix_ir,
+                           os.getcwd() + cam2end_ir_tf_path,
+                           'in')
 
 if __name__ == '__main__':
     main()

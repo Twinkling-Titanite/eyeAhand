@@ -1,14 +1,22 @@
 camera_matrix:
-- - 1043.99267578125
+- - 477.1220703125
   - 0.0
-  - 960.0
+  - 322.60992431640625
 - - 0.0
-  - 1043.99267578125
-  - 540.0
+  - 477.1220703125
+  - 198.51634216308594
 - - 0.0
   - 0.0
   - 1.0
-dist_coeffs: []
-frame_id: camera_to_infrared1_optical_frame
-height: 1080
-width: 1920
+dist_coeffs:
+- - 0.0
+- - 0.0
+- - 0.0
+- - 0.0
+- - 0.0
+- - 0.0
+- - 0.0
+- - 0.0
+frame_id: camera_to_ir_optical_frame
+height: 400
+width: 640

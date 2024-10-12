@@ -10,7 +10,8 @@ import yaml
 import message_filters
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts_to_color import *
 from uilts_to_depth import *
@@ -27,7 +28,7 @@ with open(os.getcwd() + camera_to_color_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
         if 'dist_coeffs' in data and data['dist_coeffs']!= []:
-            dist_coeffs_color = np.array(data['dist_coeffs']).reshape((5,1))
+            dist_coeffs_color = np.array(data['dist_coeffs']).reshape((-1,1))
 
 with open(os.getcwd() + camera_to_depth_info_path, 'r') as f:
     data = yaml.safe_load(f)
@@ -37,7 +38,7 @@ with open(os.getcwd() + camera_to_depth_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_matrix_depth = np.array(data['camera_matrix']).reshape((3,3))
         if 'dist_coeffs' in data and data['dist_coeffs']!= []:
-            dist_coeffs_depth = np.array(data['dist_coeffs']).reshape((5,1))
+            dist_coeffs_depth = np.array(data['dist_coeffs']).reshape((-1,1))
 
 with open(os.getcwd() + camera_to_ir_info_path, 'r') as f:
     data = yaml.safe_load(f)
@@ -47,7 +48,7 @@ with open(os.getcwd() + camera_to_ir_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_matrix_ir = np.array(data['camera_matrix']).reshape((3,3))
         if 'dist_coeffs' in data and data['dist_coeffs']!= []:
-            dist_coeffs_ir = np.array(data['dist_coeffs']).reshape((5,1))
+            dist_coeffs_ir = np.array(data['dist_coeffs']).reshape((-1,1))
 
 def callback(color_img, depth_img, ir_img):
     bridge = CvBridge()

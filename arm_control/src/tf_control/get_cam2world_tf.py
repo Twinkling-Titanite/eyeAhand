@@ -2,12 +2,13 @@
 # encoding: utf-8
 
 import rospy
-import cv2
+import yaml
 import sys
 import os
 import numpy as np
 from sensor_msgs.msg import CameraInfo
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_to_color import *
@@ -26,9 +27,6 @@ object_points = np.zeros((np.prod(chessboard_size), 3), np.float32)
 object_points[:, :2] = np.indices(chessboard_size).T.reshape(-1, 2)
 object_points *= square_size
 
-# 加载Charuco板字典和参数
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
-charuco_board = cv2.aruco.CharucoBoard_create(7, 7, 0.02, 0.014, aruco_dict)
 
 def get_img_num(path):
     img_ext = ['.jpg', '.png', '.jpeg']
@@ -42,31 +40,31 @@ def get_img_num(path):
 img_color_num = get_img_num(os.getcwd() + camera_to_color_img_path)
 img_ir_num = get_img_num(os.getcwd() + camera_to_ir_img_path)
 
-def camera_color_info_callback(msg):
-    global camera_matrix_color, dist_coeffs_color
-    # 读取相机内参
-    camera_matrix_color = np.array(msg.K).reshape(3, 3)
-    # 读取畸变系数
-    # dist_coeffs_color = np.array(msg.D)
+with open(os.getcwd() + camera_to_color_info_path, 'r') as f:
+    data = yaml.safe_load(f)
+    if data is None:
+        print("camera_color_info.yaml is empty")
+    else:
+        if 'camera_matrix' in data:
+            camera_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
+        if 'dist_coeffs' in data and data['dist_coeffs']!= []:
+            dist_coeffs_color = np.array(data['dist_coeffs']).reshape((-1,1))
 
-def camera_ir_info_callback(msg):
-    global camera_matrix_ir, dist_coeffs_ir
-    # 读取相机内参
-    camera_matrix_ir = np.array(msg.K).reshape(3, 3)
-    # 读取畸变系数
-    # dist_coeffs_ir = np.array(msg.D)
+with open(os.getcwd() + camera_to_ir_info_path, 'r') as f:
+    data = yaml.safe_load(f)
+    if data is None:
+        print("camera_ir_img_raw_topic.yaml is empty")
+    else:
+        if 'camera_matrix' in data:
+            camera_matrix_ir = np.array(data['camera_matrix']).reshape((3,3))
+        if 'dist_coeffs' in data and data['dist_coeffs']!= []:
+            dist_coeffs_ir = np.array(data['dist_coeffs']).reshape((-1,1))
 
 def main():
     rospy.init_node('to_get_cam2world_tf', anonymous=True)
     
-    rospy.Subscriber(camera_to_color_info_topic, CameraInfo, camera_color_info_callback)
-    rospy.Subscriber(camera_to_ir_info_topic, CameraInfo, camera_ir_info_callback)
-    
     files_op.clear_folder(os.getcwd() + camera_to_color_result_path)
     files_op.clear_folder(os.getcwd() + camera_to_ir_result_path)
-
-    while camera_matrix_color is None or camera_matrix_ir is None:
-        pass
     
     get_tf.get_cam2_tf(os.getcwd() + camera_to_color_img_path,
                      os.getcwd() + camera_to_poses_end_path,
@@ -78,15 +76,16 @@ def main():
                      os.getcwd() + cam2world_color_tf_path,
                      'to')
     
-    get_tf.get_cam2_tf(os.getcwd() + camera_to_ir_img_path,
-                     os.getcwd() + camera_to_poses_end_path,
-                     img_ir_num,
-                     os.getcwd() + camera_to_ir_result_path,
-                     object_points,
-                     chessboard_size,
-                     camera_matrix_ir,
-                     os.getcwd() + cam2world_ir_tf_path,
-                     'to')
+    if correct_depth_camera:
+        get_tf.get_cam2_tf(os.getcwd() + camera_to_ir_img_path,
+                           os.getcwd() + camera_to_poses_end_path,
+                           img_ir_num,
+                           os.getcwd() + camera_to_ir_result_path,
+                           object_points,
+                           chessboard_size,
+                           camera_matrix_ir,
+                           os.getcwd() + cam2world_ir_tf_path,
+                           'to')
 
 if __name__ == '__main__':
     main()

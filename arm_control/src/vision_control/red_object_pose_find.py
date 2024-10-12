@@ -10,7 +10,8 @@ import numpy as np
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge, CvBridgeError
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_to_color import *
@@ -98,7 +99,7 @@ def image_callback(color_msg):
             cv2.circle(cv_image, (x_1, y_1), 5, (0, 0, 0), -1)
             cv2.circle(cv_image, (x_2, y_2), 5, (0, 0, 0), -1)
             cv2.imshow("image", cv_image)
-            cv2.waitKey(1)
+            cv2.waitKey(100)
 
             # 发布器，用于发布红色物体的像素坐标
             point_pub_1 = rospy.Publisher(red_poistion_1_topic, PointStamped, queue_size=1)

@@ -9,6 +9,8 @@ import random
 from math import pi
 import moveit_commander
 import geometry_msgs.msg
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from move import *
@@ -44,19 +46,20 @@ def main():
     group_arm.set_max_acceleration_scaling_factor(max_acceleration_scaling_factor)
     set_pose_tolerance(group_arm)
     
-    joint_move(group_arm, [0, 0, 0, 0, 0, 0], "move_to_zero")
-    
+    # joint_move(group_arm, [0, 0, 0, 0, 0, 0], "move_to_zero")
+    print(group_arm.get_current_pose().pose)
     pose_home = group_arm.get_current_pose().pose
     
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.position.x = pose_home.position.x + 0.2
-    pose_goal.position.y = pose_home.position.y
-    pose_goal.position.z = pose_home.position.z - 0.2
+    pose_goal.position.x = 0.29
+    pose_goal.position.y = 0.1652074
+    pose_goal.position.z = 0.62005802
     pose_goal.orientation = pose_home.orientation
+    
 
     pose_move(group_arm, pose_goal, "pose_move_test")
-    
-    joint_move(group_arm, [0, 0, 0, 0, 0, 0], "move_to_zero")  
+    pose_move(group_arm, pose_goal, "pose_move_test")
+    print(group_arm.get_current_pose().pose)
     
     moveit_commander.roscpp_shutdown()
     

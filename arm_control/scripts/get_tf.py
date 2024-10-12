@@ -211,7 +211,6 @@ class TransformsMatrix:
 def get_depth(p_x, p_y, depth_image, camera_matrix_color, camera_matrix_depth, T_cam_color_to_world, T_cam_depth_to_world):
     # 读取深度图像
     depth_image = depth_image * 0.001  # 将深度转换为米
-
     # 获取图像的尺寸
     height, width = depth_image.shape
 
@@ -244,10 +243,10 @@ def get_depth(p_x, p_y, depth_image, camera_matrix_color, camera_matrix_depth, T
     distances = np.sqrt((pixel_coords_color[0, :] - p_x)**2 + (pixel_coords_color[1, :] - p_y)**2)
 
     # 找到距离小于5的像素
-    valid_depths = depth_image.flatten()[distances < 5]
-    pixel_x = u[distances < 5]
+    valid_depths = depth_image.flatten()[distances < 2]
+    pixel_x = u[distances < 2]
     pixel_x = np.mean(pixel_x)
-    pixel_y = v[distances < 5]
+    pixel_y = v[distances < 2]
     pixel_y = np.mean(pixel_y)
 
     if len(valid_depths) > 0:

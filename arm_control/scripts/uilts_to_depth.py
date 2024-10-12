@@ -13,12 +13,12 @@ cam2world_ir_tf_path = '/src/arm_control/config/camera_to/depth/cam2world_tf_mat
 
 # 相机内参话题
 camera_to_depth_info_topic = '/camera_to/depth/camera_info'
-camera_to_ir_info_topic = '/camera_to/infra1/camera_info'
+camera_to_ir_info_topic = '/camera_to/ir/camera_info'
 
 # 相机矫正前图片话题
 camera_to_depth_img_raw_topic = '/camera_to/depth/image_raw'
-camera_to_ir_img_raw_topic = '/camera_to/infra1/image_raw'
+camera_to_ir_img_raw_topic = '/camera_to/ir/image_raw'
 
 # 相机矫正后图片话题
 camera_to_depth_img_corrected_topic = '/camera_to/depth/image_corrected'
-camera_to_ir_img_corrected_topic = '/camera_to/infra1/image_corrected'
+camera_to_ir_img_corrected_topic = '/camera_to/ir/image_corrected'

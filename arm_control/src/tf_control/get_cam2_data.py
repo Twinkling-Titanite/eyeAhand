@@ -10,7 +10,8 @@ import numpy as np
 import yaml
 import moveit_commander
 from sensor_msgs.msg import Image
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_to_depth import *
@@ -52,7 +53,19 @@ def image_callback(color_msg, ir_msg):
     cv2.imshow('camera_color', image_gray_color)
     cv2.imshow('camera_ir', image_gray_ir)
 
-    cv2.waitKey(1)
+    cv2.waitKey(100)
+
+def image_callback_rgb(color_msg):
+    global image_gray_color
+    image_gray_color = cv2.cvtColor(np.frombuffer(color_msg.data, dtype=np.uint8).reshape(color_msg.height, color_msg.width, -1), cv2.COLOR_RGB2GRAY)
+    
+    # image_gray_color_filtered = cv2.bilateralFilter(image_gray_color, 5, 75, 75)
+    # laplacian = cv2.Laplacian(image_gray_color_filtered, cv2.CV_64F)
+    # image_gray_color_sharpened = cv2.convertScaleAbs(laplacian)
+    # image_gray_color = cv2.addWeighted(image_gray_color, 1.5, image_gray_color_sharpened, -0.5, 0)
+    
+    # cv2.imshow('camera_color', image_gray_color)
+    # cv2.waitKey(5)
 
 def image_save(img, path, num):
     cv2.imwrite(path + num + '.jpg', img)
@@ -72,8 +85,14 @@ def main():
     color_sub = message_filters.Subscriber(camera_color_img_corrected_topic, Image)
     ir_sub = message_filters.Subscriber(camera_ir_img_corrected_topic, Image)
     
-    ts = message_filters.ApproximateTimeSynchronizer([color_sub, ir_sub], 10, 0.1, allow_headerless=True)
-    ts.registerCallback(image_callback)
+    if correct_depth_camera:
+        color_sub = message_filters.Subscriber(camera_color_img_corrected_topic, Image)
+        ir_sub = message_filters.Subscriber(camera_ir_img_corrected_topic, Image)
+    
+        ts = message_filters.ApproximateTimeSynchronizer([color_sub, ir_sub], 10, 0.1, allow_headerless=True)
+        ts.registerCallback(image_callback)      
+    else:
+        color_sub = rospy.Subscriber(camera_color_img_corrected_topic, Image, image_callback_rgb)
     
     group = moveit_commander.MoveGroupCommander(group_arm_name)
     
@@ -83,14 +102,9 @@ def main():
     global image_gray_color, image_gray_ir
 
     count_color = get_img_num(camera_color_img_path)
-    count_ir = get_img_num(camera_ir_img_path)
+    count = count_color
     
-    if count_color == count_ir:
-        count = count_color
-    else:
-        print("something wrong with the number of images")
-    
-    while True:
+    while not rospy.is_shutdown():
         user_input = input("Enter 1 to get data, 0 to exit, 2 to clear folder:")
         
         if user_input == '0':
@@ -102,7 +116,8 @@ def main():
             pose_now = group.get_current_pose().pose
             
             image_save(image_gray_color, camera_color_img_path, str(count))
-            image_save(image_gray_ir, camera_ir_img_path, str(count))
+            if correct_depth_camera:
+                image_save(image_gray_ir, camera_ir_img_path, str(count))
             
             if data ==None:
                 data = {'poses_end': []}

@@ -1,9 +1,18 @@
 # 棋盘格尺寸和方块尺寸
-chessboard_size = (7, 4)
-square_size = 40  # 单位mm
+chessboard_size = (11, 8)
+square_size = 15  # 单位mm
 
 # 矫正参数手眼系统模式
-handeye = 'in'  # 'in' or 'to'
+handeye = 'to'  # 'in' or 'to'
+
+#是否矫正深度相机
+correct_depth_camera = False
+
+# 深度相机到彩色相机转移矩阵话题
+camera_depth_to_color_topic = '/camera_to/depth_to_color'
+
+# 深度相机到彩色相机转移矩阵文件路径
+camera_depth_to_color_path = '/src/arm_control/config/camera_depth_to_color.yaml'
 
 # 录制机械臂末端位姿路径
 camera_in_poses_end_path = '/src/arm_control/config/camera_in/poses_end.yaml'
@@ -28,4 +37,4 @@ group_hand_name = 'dobot_hand'
 planner_id = 'RRTConnect'
 max_velocity_scaling_factor = 0.05
 max_acceleration_scaling_factor = 0.01
-tolerance = 0.001
+tolerance = 1e-5

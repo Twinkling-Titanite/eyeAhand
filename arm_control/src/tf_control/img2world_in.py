@@ -14,7 +14,8 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import moveit_commander
 import tf
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_in_color import *
@@ -58,11 +59,20 @@ def img2world_callback(position_1_msg, position_2_msg):
     pixel_1_y = int(position_1_msg.point.y)
     pixel_2_x = int(position_2_msg.point.x)
     pixel_2_y = int(position_2_msg.point.y)
+    
+    if correct_depth_camera:
     # 打开相机到机械臂末端坐标系的转换矩阵
-    with open(os.getcwd() + cam2end_color_tf_path, 'r') as f:
-        T_cam_color_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
-    with open(os.getcwd() + cam2end_ir_tf_path, 'r') as f:
-        T_cam_ir_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
+        with open(os.getcwd() + cam2end_color_tf_path, 'r') as f:
+            T_cam_color_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
+        with open(os.getcwd() + cam2end_ir_tf_path, 'r') as f:
+            T_cam_ir_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
+    else:
+        # 打开相机到世界坐标系的转换矩阵
+        with open(os.getcwd() + cam2end_color_tf_path, 'r') as f:
+            T_cam_color_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
+        with open(os.getcwd() + camera_depth_to_color_path, 'r') as f:
+            T_cam_depth_to_color = np.array(yaml.load(f)['d2c_matrix'])
+        T_cam_ir_to_end = T_cam_color_to_end.dot(T_cam_depth_to_color)
     
     end_pose = group.get_current_pose().pose
     end_R_matrix = tf.transformations.quaternion_matrix([end_pose.orientation.x, end_pose.orientation.y, end_pose.orientation.z, end_pose.orientation.w])[:3,:3]
@@ -74,6 +84,9 @@ def img2world_callback(position_1_msg, position_2_msg):
     
     depth_1, p_depth_x_1, p_depth_y_1 = get_depth(pixel_1_x, pixel_1_y, depth_img, camera_to_matrix_color, camera_to_matrix_depth, T_cam_color_to_world, T_cam_ir_to_world)
     depth_2, p_depth_x_2, p_depth_y_2 = get_depth(pixel_2_x, pixel_2_y, depth_img, camera_to_matrix_color, camera_to_matrix_depth, T_cam_color_to_world, T_cam_ir_to_world)
+    print("depth_1: ", depth_1)
+    print("depth_2: ", depth_2)
+    
     
     world_coords_1 = get_world_coordinates(p_depth_x_1, p_depth_y_1, depth_1, camera_to_matrix_depth, T_cam_ir_to_world)
     world_coords_2 = get_world_coordinates(p_depth_x_2, p_depth_y_2, depth_2, camera_to_matrix_depth, T_cam_ir_to_world)
@@ -88,9 +101,12 @@ def img2world_callback(position_1_msg, position_2_msg):
     pose_msg.header.stamp = rospy.Time.now()
     pose_msg.header.frame_id = "world"
     pose_msg.pose.position.x = world_coords[0]
-    pose_msg.pose.position.y = world_coords[1]
+    pose_msg.pose.position.y = world_coords[1] + 0.14
     pose_msg.pose.position.z = world_coords[2]
-    pose_msg.pose.orientation = rpy2quaternion(0, 3.14, (np.pi/2 - angle_rad) + 0.785)
+    pose_msg.pose.orientation.x = 0
+    pose_msg.pose.orientation.y = 0.707
+    pose_msg.pose.orientation.z = -0.707
+    pose_msg.pose.orientation.w = 0
     
     pose_pub.publish(pose_msg)
     

@@ -9,7 +9,8 @@ from numpy import pi
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryFeedback, FollowJointTrajectoryResult
 from sensor_msgs.msg import JointState
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove, MyType
 
@@ -66,7 +67,10 @@ class ArmControllerActionServer:
                              time_diff,
                              50,
                              500)
-            rospy.sleep(time_diff)  # 延时确保机械臂动作完成
+            if (i == len(goal.trajectory.points)-1):
+                self.move.Sync()
+            else:
+                rospy.sleep(time_diff)
             # 更新关节位置为当前值
             self.joint_positions = self.get_joint_states(self.dashboard)
             # self.joint_positions = list(point.positions)
@@ -74,7 +78,7 @@ class ArmControllerActionServer:
             # 填充 Feedback 消息
             feedback.actual.positions = self.joint_positions
             feedback.desired.positions = list(point.positions)
-            feedback.error.positions = [0] * len(self.joint_positions)  # 假设没有误差, 实际上需要计算误差
+            feedback.error.positions = list(map(lambda a, b: a - b, feedback.desired.positions, feedback.actual.positions))
 
             # 发布当前的关节状态到 /joint_states 话题
             self.publish_joint_state()
@@ -98,7 +102,7 @@ class ArmControllerActionServer:
 
     def connect_robot(self):
         try:
-            ip = "192.168.5.1"
+            ip = "192.168.31.100"
             dashboard_p = 29999
             move_p = 30003
             feed_p = 30004
@@ -132,7 +136,7 @@ if __name__ == '__main__':
     rospy.init_node('moveit_bringup')
     # 创建 Action 服务端
     server = ArmControllerActionServer()
-    rate = rospy.Rate(10)  # 10Hz 发送关节状态反馈
+    rate = rospy.Rate(33)  # 33Hz 发送关节状态反馈
     while not rospy.is_shutdown():
         server.publish_joint_state()
         rate.sleep()

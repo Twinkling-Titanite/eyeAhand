@@ -13,7 +13,8 @@ import numpy as np
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose, Point
 
-
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from uilts import *
 from uilts_in_color import *

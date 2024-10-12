@@ -20,7 +20,7 @@
   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
   <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
 
-  <param name="sample_duration" value="0.05"/>
+  <param name="sample_duration" value="0.03"/>
 
   <rosparam command="load" file="$(find cra_moveit_config)/config/ompl_planning.yaml"/>
 

@@ -1,13 +1,16 @@
+
 import sys
 import os
 import re
 import time
+home_dir = os.path.expanduser('~')
+os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
 from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove, MyType
 
 def connect_robot():
     try:
-        ip = "192.168.5.1"
+        ip = "192.168.31.100"
         dashboard_p = 29999
         move_p = 30003
         feed_p = 30004
