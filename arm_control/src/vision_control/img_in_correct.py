@@ -3,26 +3,25 @@
 
 import rospy
 import cv2
-import os
 import sys
 import numpy as np
 import yaml
 import message_filters
+import roslib
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
-home_dir = os.path.expanduser('~')
-os.chdir(home_dir + '/eyeAhand')
+package_path = roslib.packages.get_pkg_dir('arm_control')
+sys.path.append(package_path + '/scripts/')
 
-sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts_in_color import *
-from uilts_in_depth import *
+from utils_in_color import *
+from utils_in_depth import *
 
 dist_coeffs_color = np.zeros((5,1))
 dist_coeffs_depth = np.zeros((5,1))
 dist_coeffs_ir = np.zeros((5,1))
 
-with open(os.getcwd() + camera_in_color_info_path, 'r') as f:
+with open(package_path + camera_in_color_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_color_info.yaml is empty")
@@ -32,7 +31,7 @@ with open(os.getcwd() + camera_in_color_info_path, 'r') as f:
         if 'dist_coeffs' in data and data['dist_coeffs']!= []:
             dist_coeffs_color = np.array(data['dist_coeffs']).reshape((-1,1))
 
-with open(os.getcwd() + camera_in_depth_info_path, 'r') as f:
+with open(package_path + camera_in_depth_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_depth_info.yaml is empty")
@@ -42,7 +41,7 @@ with open(os.getcwd() + camera_in_depth_info_path, 'r') as f:
         if 'dist_coeffs' in data and data['dist_coeffs']!= []:
             dist_coeffs_depth = np.array(data['dist_coeffs']).reshape((-1,1))
 
-with open(os.getcwd() + camera_in_ir_info_path, 'r') as f:
+with open(package_path + camera_in_ir_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_ir_info.yaml is empty")

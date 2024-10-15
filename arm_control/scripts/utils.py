@@ -9,18 +9,20 @@ handeye = 'to'  # 'in' or 'to'
 correct_depth_camera = False
 
 # 深度相机到彩色相机转移矩阵话题
-camera_depth_to_color_topic = '/camera_to/depth_to_color'
+camera_to_d2c_topic = '/camera_to/depth_to_color'
+camera_in_d2c_topic = '/camera_in/depth_to_color'
 
 # 深度相机到彩色相机转移矩阵文件路径
-camera_depth_to_color_path = '/src/arm_control/config/camera_depth_to_color.yaml'
+camera_to_depth_to_color_path = '/config/camera_to/camera_depth_to_color.yaml'
+camera_in_depth_to_color_path = '/config/camera_in/camera_depth_to_color.yaml'
 
 # 录制机械臂末端位姿路径
-camera_in_poses_end_path = '/src/arm_control/config/camera_in/poses_end.yaml'
-camera_to_poses_end_path = '/src/arm_control/config/camera_to/poses_end.yaml'
+camera_in_poses_end_path = '/config/camera_in/poses_end.yaml'
+camera_to_poses_end_path = '/config/camera_to/poses_end.yaml'
 
 # 最大移动范围路径
-camera_in_max_positions_path = '/src/arm_control/config/camera_in/max_position.yaml'
-camera_to_max_positions_path = '/src/arm_control/config/camera_to/max_position.yaml'
+camera_in_max_positions_path = '/config/camera_in/max_position.yaml'
+camera_to_max_positions_path = '/config/camera_to/max_position.yaml'
 
 # 红色物体识别像素坐标与深度信息话题
 red_object_position_topic = '/arm_control/position_object_red'
@@ -28,7 +30,7 @@ red_poistion_1_topic = '/arm_control/red_position_1'
 red_poistion_2_topic = '/arm_control/red_position_2'
 
 # 世界坐标发布话题
-world_coord_topic = '/img2world/world_coordinates'
+world_coord_topic = '/arm_control/world_coordinate'
 
 # moveit设置参数
 group_arm_name = 'dobot_arm'

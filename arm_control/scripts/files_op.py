@@ -2,6 +2,15 @@ import os
 import shutil
 import yaml
 
+def get_img_num(path):
+    img_ext = ['.jpg', '.png', '.jpeg']
+    img_num = 0
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.lower().endswith(tuple(img_ext)):
+                img_num += 1
+    return img_num
+
 def read_yaml(yaml_path):
     with open(yaml_path, 'r', encoding='utf-8') as f:
         data = yaml.load(f, Loader=yaml.FullLoader)

@@ -5,24 +5,24 @@ import rospy
 import numpy as np
 import yaml
 import sys
-import os
 import time
-import cv2
+import roslib
 import message_filters
 from geometry_msgs.msg import PoseStamped, PointStamped
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-home_dir = os.path.expanduser('~')
-os.chdir(home_dir + '/eyeAhand')
-sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts import *
-from uilts_to_color import *
-from uilts_to_depth import *
+
+package_path = roslib.packages.get_pkg_dir('arm_control')
+sys.path.append(package_path + '/scripts/')
+
+from utils import *
+from utils_to_color import *
+from utils_to_depth import *
 
 from get_tf import get_world_coordinates, get_depth
 from move import rpy2quaternion
 
-with open(os.getcwd() + camera_to_color_info_path, 'r') as f:
+with open(package_path + camera_to_color_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_color_info.yaml is empty")
@@ -30,7 +30,7 @@ with open(os.getcwd() + camera_to_color_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_to_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
 
-with open(os.getcwd() + camera_to_depth_info_path, 'r') as f:
+with open(package_path + camera_to_depth_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_ir_info.yaml is empty")
@@ -38,7 +38,7 @@ with open(os.getcwd() + camera_to_depth_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_to_matrix_depth = np.array(data['camera_matrix']).reshape((3,3))
 
-with open(os.getcwd() + camera_to_ir_info_path, 'r') as f:
+with open(package_path + camera_to_ir_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_ir_info.yaml is empty")
@@ -64,15 +64,15 @@ def img2world_callback(position_1_msg, position_2_msg):
     
     if correct_depth_camera:
         # 打开相机到世界坐标系的转换矩阵
-        with open(os.getcwd() + cam2world_color_tf_path, 'r') as f:
+        with open(package_path + cam2world_color_tf_path, 'r') as f:
             T_cam_color_to_world = np.array(yaml.load(f)['cam2world_tf_matrix'])
-        with open(os.getcwd() + cam2world_ir_tf_path, 'r') as f:
+        with open(package_path + cam2world_ir_tf_path, 'r') as f:
             T_cam_ir_to_world = np.array(yaml.load(f)['cam2world_tf_matrix'])
     else:
         # 打开相机到世界坐标系的转换矩阵
-        with open(os.getcwd() + cam2world_color_tf_path, 'r') as f:
+        with open(package_path + cam2world_color_tf_path, 'r') as f:
             T_cam_color_to_world = np.array(yaml.load(f)['cam2world_tf_matrix'])
-        with open(os.getcwd() + camera_depth_to_color_path, 'r') as f:
+        with open(package_path + camera_to_depth_to_color_path, 'r') as f:
             T_cam_depth_to_color = np.array(yaml.load(f)['d2c_matrix'])
         T_cam_ir_to_world = np.dot(T_cam_depth_to_color, T_cam_color_to_world)
     

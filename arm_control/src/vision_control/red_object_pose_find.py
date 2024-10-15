@@ -6,24 +6,26 @@ import cv2
 import os
 import sys
 import yaml
+import roslib
 import numpy as np
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge, CvBridgeError
-home_dir = os.path.expanduser('~')
-os.chdir(home_dir + '/eyeAhand')
-sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts import *
-from uilts_to_color import *
-from uilts_in_color import *
+
+package_path = roslib.packages.get_pkg_dir('arm_control')
+sys.path.append(package_path + '/scripts/')
+
+from utils import *
+from utils_to_color import *
+from utils_in_color import *
 
 if handeye == 'in':
-    camera_color_info_path = os.getcwd() + camera_in_color_info_path
+    camera_color_info_path = package_path + camera_in_color_info_path
     camera_color_img_corrected_topic = camera_in_color_img_corrected_topic
     
 else:
     if handeye == 'to':
-        camera_color_info_path = os.getcwd() + camera_to_color_info_path
+        camera_color_info_path = package_path + camera_to_color_info_path
         camera_color_img_corrected_topic = camera_to_color_img_corrected_topic
     else:
         print("Please choose handeye in or to")

@@ -12,7 +12,7 @@ import geometry_msgs.msg
 home_dir = os.path.expanduser('~')
 os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts import *
+from utils import *
 from move import *
 
 # class Pose:
@@ -51,9 +51,9 @@ def main():
     pose_home = group_arm.get_current_pose().pose
     
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.position.x = 0.29
-    pose_goal.position.y = 0.1652074
-    pose_goal.position.z = 0.62005802
+    pose_goal.position.x = 0.42941274 - 0.12
+    pose_goal.position.y = -0.19931971
+    pose_goal.position.z = 0.57222018
     pose_goal.orientation = pose_home.orientation
     
 

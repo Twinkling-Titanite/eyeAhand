@@ -3,15 +3,16 @@
 
 import rospy
 import sys
-import os
 import re
+import roslib
 from numpy import pi
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryFeedback, FollowJointTrajectoryResult
 from sensor_msgs.msg import JointState
-home_dir = os.path.expanduser('~')
-os.chdir(home_dir + '/eyeAhand')
-sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
+
+package_path = roslib.packages.get_pkg_dir('arm_control')
+sys.path.append(package_path + '/scripts/')
+
 from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove, MyType
 
 class ArmControllerActionServer:

@@ -5,28 +5,26 @@ import rospy
 import numpy as np
 import yaml
 import sys
-import time
-import os
-import cv2
+import roslib
 import message_filters
 from geometry_msgs.msg import PointStamped, PoseStamped
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import moveit_commander
 import tf
-home_dir = os.path.expanduser('~')
-os.chdir(home_dir + '/eyeAhand')
-sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts import *
-from uilts_in_color import *
-from uilts_in_depth import *
+
+package_path = roslib.packages.get_pkg_dir('arm_control')
+sys.path.append(package_path + '/scripts/')
+
+from utils import *
+from utils_in_color import *
+from utils_in_depth import *
 
 from get_tf import get_world_coordinates, get_depth
-from move import rpy2quaternion
 
 group = moveit_commander.MoveGroupCommander(group_arm_name)
 
-with open(os.getcwd() + camera_in_color_info_path, 'r') as f:
+with open(package_path + camera_in_color_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_color_info.yaml is empty")
@@ -34,7 +32,7 @@ with open(os.getcwd() + camera_in_color_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_to_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
 
-with open(os.getcwd() + camera_in_depth_info_path, 'r') as f:
+with open(package_path + camera_in_depth_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_ir_info.yaml is empty")
@@ -42,7 +40,7 @@ with open(os.getcwd() + camera_in_depth_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_to_matrix_depth = np.array(data['camera_matrix']).reshape((3,3))
 
-with open(os.getcwd() + camera_in_ir_info_path, 'r') as f:
+with open(package_path + camera_in_ir_info_path, 'r') as f:
     data = yaml.safe_load(f)
     if data is None:
         print("camera_ir_info.yaml is empty")
@@ -62,15 +60,15 @@ def img2world_callback(position_1_msg, position_2_msg):
     
     if correct_depth_camera:
     # 打开相机到机械臂末端坐标系的转换矩阵
-        with open(os.getcwd() + cam2end_color_tf_path, 'r') as f:
+        with open(package_path + cam2end_color_tf_path, 'r') as f:
             T_cam_color_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
-        with open(os.getcwd() + cam2end_ir_tf_path, 'r') as f:
+        with open(package_path + cam2end_ir_tf_path, 'r') as f:
             T_cam_ir_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
     else:
         # 打开相机到世界坐标系的转换矩阵
-        with open(os.getcwd() + cam2end_color_tf_path, 'r') as f:
+        with open(package_path + cam2end_color_tf_path, 'r') as f:
             T_cam_color_to_end = np.array(yaml.load(f)['cam2end_tf_matrix'])
-        with open(os.getcwd() + camera_depth_to_color_path, 'r') as f:
+        with open(package_path + camera_in_depth_to_color_path, 'r') as f:
             T_cam_depth_to_color = np.array(yaml.load(f)['d2c_matrix'])
         T_cam_ir_to_end = T_cam_color_to_end.dot(T_cam_depth_to_color)
     
@@ -128,7 +126,7 @@ def main():
     position_sub_2 = message_filters.Subscriber(red_poistion_2_topic, PointStamped, queue_size=1)
     rospy.wait_for_message(red_poistion_1_topic, PointStamped, timeout=None)
     rospy.wait_for_message(red_poistion_2_topic, PointStamped, timeout=None)
-    depth_sub = rospy.Subscriber(camera_in_depth_img_corrected_topic, Image, depth_img_callback, queue_size=1)
+    rospy.Subscriber(camera_in_depth_img_corrected_topic, Image, depth_img_callback, queue_size=1)
     
     ts = message_filters.ApproximateTimeSynchronizer([position_sub_1, position_sub_2], 10, 0.1, allow_headerless=True)
     ts.registerCallback(img2world_callback)

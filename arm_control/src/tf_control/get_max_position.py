@@ -15,11 +15,11 @@ import math
 home_dir = os.path.expanduser('~')
 os.chdir(home_dir + '/eyeAhand')
 sys.path.insert(0, os.getcwd() + "/src/arm_control/scripts")
-from uilts import *
-from uilts_in_color import *
-from uilts_to_color import *
-from uilts_in_depth import *
-from uilts_to_depth import *
+from utils import *
+from utils_in_color import *
+from utils_to_color import *
+from utils_in_depth import *
+from utils_to_depth import *
 
 if handeye == 'in':
     camera_color_img_corrected_topic = camera_in_color_img_corrected_topic

@@ -17,6 +17,3 @@ dist_coeffs:
 - - 0.0
 - - 0.0
 - - 0.0
-frame_id: camera_to_ir_optical_frame
-height: 400
-width: 640
