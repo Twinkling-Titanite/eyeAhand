@@ -42,4 +42,11 @@ if __name__ == '__main__':
 
     box = Obstacle(scene, "box", pose_box, size_box)
     box.add_obstacle()
+    
+    pose_box.pose.position.x = 0
+    pose_box.pose.position.y = -0.20
+    pose_box.pose.position.z = 0.61
+    size_box = [0.2, 0.2, 0.2]
+    box_1 = Obstacle(scene, "box_1", pose_box, size_box)
+    box_1.add_obstacle()
         

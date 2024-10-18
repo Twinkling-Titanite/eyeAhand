@@ -5,7 +5,6 @@ import rospy
 import numpy as np
 import yaml
 import sys
-import time
 import roslib
 import message_filters
 from geometry_msgs.msg import PoseStamped, PointStamped
@@ -51,7 +50,6 @@ pose_pub = rospy.Publisher(world_coord_topic, PoseStamped, queue_size=1)
 depth_img = None
 
 def img2world_callback(position_1_msg, position_2_msg):
-    start_time = time.time()
     global depth_img
     if depth_img is None:
         return
@@ -79,6 +77,9 @@ def img2world_callback(position_1_msg, position_2_msg):
     depth_1, p_depth_x_1, p_depth_y_1 = get_depth(pixel_1_x, pixel_1_y, depth_img, camera_to_matrix_color, camera_to_matrix_depth, T_cam_color_to_world, T_cam_ir_to_world)
     depth_2, p_depth_x_2, p_depth_y_2 = get_depth(pixel_2_x, pixel_2_y, depth_img, camera_to_matrix_color, camera_to_matrix_depth, T_cam_color_to_world, T_cam_ir_to_world)
     
+    print("depth_1: ", depth_1)
+    print("depth_2: ", depth_2)
+    
     world_coords_1 = get_world_coordinates(p_depth_x_1, p_depth_y_1, depth_1, camera_to_matrix_depth, T_cam_ir_to_world)
     world_coords_2 = get_world_coordinates(p_depth_x_2, p_depth_y_2, depth_2, camera_to_matrix_depth, T_cam_ir_to_world)
     
@@ -99,8 +100,6 @@ def img2world_callback(position_1_msg, position_2_msg):
     pose_pub.publish(pose_msg)
     
     rospy.loginfo("World coordinates: {}".format(world_coords))
-    end_time = time.time()
-    print("time: ", end_time - start_time)
 
 def depth_img_callback(depth_msg):
     global depth_img

@@ -161,6 +161,8 @@ def main():
             data = {'poses_end': []}
             
         elif user_input == 'c':
+            files_op.clear_folder(camera_color_result_path)
+            files_op.clear_folder(camera_ir_result_path)
             img_color_num = files_op.get_img_num(camera_color_img_path)
             img_ir_num = files_op.get_img_num(camera_ir_img_path)
             get_tf.get_cam2_tf(

@@ -37,19 +37,23 @@ def set_pose_tolerance(group, tolerance = 0.001):
 def pose_move(group, pose_goal, str="move"):
     group.set_pose_target(pose_goal)
     plan = group.plan()
-    if plan:
-        rospy.loginfo(str + " planning successful!")
+    count = 1
+    while count > 0:
+        if plan[0]:
+            rospy.loginfo(str + " planning successful!")
+            break
+        else:
+            rospy.loginfo(str + " trying again...")
+            plan = group.plan()
+            count -= 1
+    if not plan[0]:
+        return plan[0]
     else:
-        rospy.logerr(str + " planning failed!")
-        return
-    group.execute(plan[1])
-    group.clear_pose_targets()
+        group.execute(plan[1])
+        group.clear_pose_targets()
+        return plan[0]
 
 def joint_move(group, joint_goal, str="move"):
-    plan = group.go(joint_goal, wait=True)
-    if plan:
-        rospy.loginfo(str + " planning successful!")
-    else:
-        rospy.logerr(str + " planning failed!")
+    group.go(joint_goal, wait=True)
     group.stop()
     group.clear_pose_targets()

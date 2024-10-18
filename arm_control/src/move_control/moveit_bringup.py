@@ -7,6 +7,7 @@ import re
 import roslib
 from numpy import pi
 import actionlib
+from std_srvs.srv import SetBool, SetBoolResponse
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryFeedback, FollowJointTrajectoryResult
 from sensor_msgs.msg import JointState
 
@@ -18,10 +19,9 @@ from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove, MyType
 class ArmControllerActionServer:
     def __init__(self):
         self.dashboard, self.move, self.feed = self.connect_robot()
-        self.dashboard.ClearError() 
-        self.dashboard.DisableRobot() 
+        # self.dashboard.ClearError() 
+        # self.dashboard.DisableRobot() 
  
-        
         # 创建 Action 服务端
         self.server = actionlib.SimpleActionServer('/arm_position_controllers/follow_joint_trajectory',
                                                     FollowJointTrajectoryAction,
@@ -33,13 +33,17 @@ class ArmControllerActionServer:
 
         # 机械臂关节的名字和初始状态
         self.joint_names = ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6"]
-        
         self.joint_positions = self.get_joint_states(self.dashboard)
-        # self.joint_positions = [0, 0, 0, 0, 0, 0]
+        
+        self.gripper_pick = rospy.Service('gripper_pick', SetBool, self.gripper_pick_request)
 
         # 启动服务器
         self.server.start()
         self.dashboard.EnableRobot() 
+        # self.dashboard.SetTerminal485(115200)
+        self.dashboard.ModbusCreate("127.0.0.1",60000,1,1)
+        self.dashboard.SetHoldRegs(1, 256, 1, "{165}", "U16")
+        self.dashboard.SetHoldRegs(1, 259, 1, "{1000}", "U16")
 
     def execute_callback(self, goal):
         rospy.loginfo("Received trajectory goal from MoveIt")
@@ -91,6 +95,14 @@ class ArmControllerActionServer:
         result = FollowJointTrajectoryResult()
         self.server.set_succeeded(result)
 
+    def gripper_pick_request(self, req):
+        if req.data:
+            self.dashboard.SetHoldRegs(1, 259, 1, "{1000}", "U16")
+            return SetBoolResponse(True, "Open Gripper")
+        else:
+            self.dashboard.SetHoldRegs(1, 259, 1, "{0}", "U16")
+            return SetBoolResponse(False, "Close Gripper")
+    
     def publish_joint_state(self):
         """发布机械臂当前的关节状态到 /Joint_State 话题"""
         joint_state = JointState()

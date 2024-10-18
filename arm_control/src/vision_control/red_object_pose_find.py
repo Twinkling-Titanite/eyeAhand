@@ -68,7 +68,7 @@ def image_callback(color_msg):
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for contour in contours:
         # 忽略小的轮廓
-        if cv2.contourArea(contour) > 200:
+        if cv2.contourArea(contour) > 5:
             
             rect = cv2.minAreaRect(contour)
             box = cv2.boxPoints(rect)
@@ -101,7 +101,7 @@ def image_callback(color_msg):
             cv2.circle(cv_image, (x_1, y_1), 5, (0, 0, 0), -1)
             cv2.circle(cv_image, (x_2, y_2), 5, (0, 0, 0), -1)
             cv2.imshow("image", cv_image)
-            cv2.waitKey(100)
+            cv2.waitKey(5)
 
             # 发布器，用于发布红色物体的像素坐标
             point_pub_1 = rospy.Publisher(red_poistion_1_topic, PointStamped, queue_size=1)

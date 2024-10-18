@@ -400,5 +400,44 @@
       effort="300"
       velocity="100" />
   </joint>
- 
+
+  <link
+    name="gripper_dh">
+    <visual>
+      <origin
+        xyz="0 0 -0.0915"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find cra_description)/meshes/cr3/gripper_dh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 -0.0915"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find cra_description)/meshes/cr3/gripper_dh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_gripper_dh"
+    type="fixed">
+    <origin
+      xyz="0 0 0.1065"
+      rpy="0 0 0" />
+    <parent
+      link="Link6" />
+    <child
+      link="gripper_dh" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
 </robot>

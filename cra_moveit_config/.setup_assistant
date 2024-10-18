@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Twinkling_Titanite
     author_email: noetic@ros.com
-    generated_timestamp: 1725872816
+    generated_timestamp: 1729237905

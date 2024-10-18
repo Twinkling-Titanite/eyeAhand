@@ -37,6 +37,6 @@ group_arm_name = 'dobot_arm'
 hand = False
 group_hand_name = 'dobot_hand'
 planner_id = 'RRTConnect'
-max_velocity_scaling_factor = 0.05
+max_velocity_scaling_factor = 0.03
 max_acceleration_scaling_factor = 0.01
 tolerance = 1e-5

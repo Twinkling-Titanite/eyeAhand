@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find orbbec_camera)/launch/gemini.launch"/>
+    <node name="img_to_correct" pkg="arm_control" type="img_to_correct.py" output="screen"/>
+</launch>

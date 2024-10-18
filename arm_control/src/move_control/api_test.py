@@ -42,30 +42,8 @@ def get_joint_states(dashboard):
 if __name__ == '__main__':
 
     dashboard, move, feed = connect_robot()
-    
-    dashboard.DisableRobot()
-    dashboard.EnableRobot()
+    dashboard.SetHoldRegs(1, 259, 1, '{0}', "U16")
     dashboard.RobotMode()
-
-    move.MovL(400, -100, 500, -89, -1, -88)
-
-
-    # start = 0
-    # end = 0
-    # if joint_states[0] == '0':
-    #     print("获取机械臂角度")
-    #     for i in range(0, len(joint_states)):
-    #         if joint_states[i] == '{':
-    #             start = i + 1
-    #         if joint_states[i] == '}':
-    #             end = i - 1
-    #             break
-                
-    # angle = 0
-    # while True:
-    #     move.ServoJ(0, 0, angle, 0, 0, 0,t=0.1,lookahead_time=50, gain=500)
-    #     angle += 0.1
-    #     if angle > 30:
-    #         break
-
+    
+    
     
