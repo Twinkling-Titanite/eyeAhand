@@ -53,7 +53,7 @@ def callback(data):
 
 def main():
     rospy.init_node('get_camera_info', anonymous=True)
-    rospy.Subscriber(camera_color_img_raw_topic, Image, callback)
+    rospy.Subscriber('/hikrobot_camera/rgb', Image, callback)
     global cv_image
     counter = 0
     while not rospy.is_shutdown():

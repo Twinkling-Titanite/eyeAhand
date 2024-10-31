@@ -42,7 +42,9 @@ def get_joint_states(dashboard):
 if __name__ == '__main__':
 
     dashboard, move, feed = connect_robot()
-    dashboard.SetHoldRegs(1, 259, 1, '{0}', "U16")
+
+    dashboard.SetHoldRegs(1, 256, 1, "{165}", "U16")
+    dashboard.SetHoldRegs(1, 259, 1, "{0}", "U16")
     dashboard.RobotMode()
     
     

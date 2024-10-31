@@ -405,7 +405,7 @@
     name="gripper_dh">
     <visual>
       <origin
-        xyz="0 0 -0.0915"
+        xyz="0 0 -0.1545"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -419,7 +419,7 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 -0.0915"
+        xyz="0 0 -0.1545"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -431,7 +431,7 @@
     name="joint_gripper_dh"
     type="fixed">
     <origin
-      xyz="0 0 0.1065"
+      xyz="0 0 0.1695"
       rpy="0 0 0" />
     <parent
       link="Link6" />

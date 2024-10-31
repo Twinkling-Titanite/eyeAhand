@@ -45,7 +45,7 @@ def main():
     jc6 = JointConstraint(joint_name="joint6", position = joint_state[5], tolerance_above = 0.5, tolerance_below = 0.5, weight = 0.5)
     
     constraints = moveit_commander.Constraints()
-    # constraints.joint_constraints.append(jc1)
+    constraints.joint_constraints.append(jc1)
     # constraints.joint_constraints.append(jc2)
     # constraints.joint_constraints.append(jc3)
     # constraints.joint_constraints.append(jc4)
@@ -62,14 +62,10 @@ def main():
     pose_home = group_arm.get_current_pose().pose
     
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.position.x = 0.45
-    pose_goal.position.y = 0.011
-    pose_goal.position.z = 0.27
+    pose_goal.position.x = 0.44
+    pose_goal.position.y = 0
+    pose_goal.position.z = 0.228
     pose_goal.orientation = pose_home.orientation
-    pose_goal.orientation.x = -0.7072
-    pose_goal.orientation.y = -0.7071
-    pose_goal.orientation.z = 0.0
-    pose_goal.orientation.w = 0.0
 
     pose_move(group_arm, pose_goal, "pose_move_test")
     print(group_arm.get_current_joint_values())
