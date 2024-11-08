@@ -100,7 +100,7 @@ class ArmControllerActionServer:
             self.dashboard.SetHoldRegs(1, 259, 1, "{1000}", "U16")
             return SetBoolResponse(True, "Open Gripper")
         else:
-            self.dashboard.SetHoldRegs(1, 259, 1, "{240}", "U16")
+            self.dashboard.SetHoldRegs(1, 259, 1, "{140}", "U16")
             return SetBoolResponse(False, "Close Gripper")
     
     def publish_joint_state(self):

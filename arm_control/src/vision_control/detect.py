@@ -16,29 +16,22 @@ package_path = roslib.packages.get_pkg_dir('arm_control')
 sys.path.append(package_path + '/scripts/')
 
 from utils import *
-from utils_to_color import *
-from utils_in_color import *
 
-if handeye == 'in':
-    camera_color_info_path = package_path + camera_in_color_info_path
+while not rospy.is_shutdown():
+    eyehand = input("Please choose eyehand in or to: ")
+    if eyehand not in ['in', 'to']:
+        print("Invalid input!")
+        continue
+    break
+
+if eyehand == 'in':
     camera_color_img_corrected_topic = camera_in_color_img_corrected_topic
     
 else:
-    if handeye == 'to':
-        camera_color_info_path = package_path + camera_to_color_info_path
+    if eyehand == 'to':
         camera_color_img_corrected_topic = camera_to_color_img_corrected_topic
-    else:
-        print("Please choose handeye in or to")
-
+        
 point_pub = None
-
-with open(camera_color_info_path, 'r') as f:
-    data = yaml.safe_load(f)
-    if data is None:
-        print("camera_color_info.yaml is empty")
-    else:
-        if 'camera_matrix' in data:
-            camera_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
 
 def image_callback(color_msg):
     global  point_pub
@@ -56,7 +49,8 @@ def image_callback(color_msg):
     # blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
     # 使用自适应阈值法进行二值化
-    _, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+    _, thresh = cv2.threshold(gray, 75, 255, cv2.THRESH_BINARY_INV)
+    cv2.imshow("thresh", thresh)
 
     # kernel_open = np.ones((5, 5), np.uint8)
     # kernel_close = np.ones((7, 7), np.uint8)
@@ -69,11 +63,11 @@ def image_callback(color_msg):
     # edges_colored[edges != 0] = [0, 255, 0]
     # overlay = cv2.addWeighted(image, 1, edges_colored, 1, 0)
 
-    # 查找红色物体的轮廓
+    # 查找物体的轮廓
     contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for contour in contours:
         # 忽略小的轮廓
-        if cv2.contourArea(contour) > 50 and cv2.contourArea(contour) < 1000:           
+        if cv2.contourArea(contour) > 15 and cv2.contourArea(contour) < 1000:           
             rect = cv2.minAreaRect(contour)
             box = cv2.boxPoints(rect)
             box = np.int0(box)
@@ -106,20 +100,20 @@ def image_callback(color_msg):
             cv2.circle(image, (x_2, y_2), 5, (0, 0, 0), -1)
 
             # 发布器，用于发布红色物体的像素坐标
-            point_pub_1 = rospy.Publisher(red_poistion_1_topic, PointStamped, queue_size=1)
-            point_pub_2 = rospy.Publisher(red_poistion_2_topic, PointStamped, queue_size=1)
+            point_pub_1 = rospy.Publisher(object_poistion_1_topic, PointStamped, queue_size=1)
+            point_pub_2 = rospy.Publisher(object_poistion_2_topic, PointStamped, queue_size=1)
                     
             # 创建并发布 PointStamped 消息
             point_msg = PointStamped()
             point_msg.header.stamp = rospy.Time.now()
-            point_msg.header.frame_id = 'red_object_1_frame'
+            point_msg.header.frame_id = 'object_1_frame'
             point_msg.point.x = x_1
             point_msg.point.y = y_1
             point_msg.point.z = 0
 
             point_pub_1.publish(point_msg)
 
-            point_msg.header.frame_id = 'red_object_2_frame'
+            point_msg.header.frame_id = 'object_2_frame'
             point_msg.point.x = x_2
             point_msg.point.y = y_2
             point_msg.point.z = 0
@@ -132,7 +126,7 @@ def image_callback(color_msg):
 def main():
     global point_pub
     rospy.init_node('red_object_pose_find', anonymous=True)
-    rospy.Subscriber(camera_to_color_img_raw_topic, Image, image_callback)
+    rospy.Subscriber(camera_in_color_img_raw_topic, Image, image_callback)
     
     rospy.loginfo("Red object pose find node started.")
     rospy.spin()

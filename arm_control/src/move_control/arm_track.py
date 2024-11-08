@@ -47,10 +47,10 @@ def main():
     jc6 = JointConstraint(joint_name="joint6", position = joint_state[5], tolerance_above = np.pi, tolerance_below = np.pi, weight = 0.5)
     
     constraints = moveit_commander.Constraints()
-    # constraints.joint_constraints.append(jc1)
+    constraints.joint_constraints.append(jc1)
     # constraints.joint_constraints.append(jc2)
     # constraints.joint_constraints.append(jc3)
-    # constraints.joint_constraints.append(jc4)
+    constraints.joint_constraints.append(jc4)
     constraints.joint_constraints.append(jc5)
     constraints.joint_constraints.append(jc6)
     group_arm.set_path_constraints(constraints)
@@ -74,14 +74,16 @@ def main():
         pose_goal.position.z += 0.05
         if not success :
             continue
+        if pose_goal.position.z < 0.05:
+            continue
         if pose_move(group_arm, pose_goal, 'go to red'):
-            gripper_pick(True)
+            gripper_pick(False)
             pose_goal.position.z -= 0.05
             if pose_move(group_arm, pose_goal, 'pick'):
                 gripper_pick(False)
 
         joint_move(group_arm, joint_home, 'home')
-        gripper_pick(True)
+        gripper_pick(False)
         rospy.sleep(1)
         
     moveit_commander.roscpp_shutdown()

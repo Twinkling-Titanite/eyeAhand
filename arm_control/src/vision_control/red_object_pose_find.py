@@ -16,29 +16,22 @@ package_path = roslib.packages.get_pkg_dir('arm_control')
 sys.path.append(package_path + '/scripts/')
 
 from utils import *
-from utils_to_color import *
-from utils_in_color import *
 
-if handeye == 'in':
-    camera_color_info_path = package_path + camera_in_color_info_path
+while not rospy.is_shutdown():
+    eyehand = input("Please choose eyehand in or to: ")
+    if eyehand not in ['in', 'to']:
+        print("Invalid input!")
+        continue
+    break
+
+if eyehand == 'in':
     camera_color_img_corrected_topic = camera_in_color_img_corrected_topic
     
 else:
-    if handeye == 'to':
-        camera_color_info_path = package_path + camera_to_color_info_path
+    if eyehand == 'to':
         camera_color_img_corrected_topic = camera_to_color_img_corrected_topic
-    else:
-        print("Please choose handeye in or to")
 
 point_pub = None
-
-with open(camera_color_info_path, 'r') as f:
-    data = yaml.safe_load(f)
-    if data is None:
-        print("camera_color_info.yaml is empty")
-    else:
-        if 'camera_matrix' in data:
-            camera_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
 
 def image_callback(color_msg):
     global  point_pub
@@ -102,8 +95,8 @@ def image_callback(color_msg):
             cv2.circle(cv_image, (x_2, y_2), 5, (0, 0, 0), -1)
 
             # 发布器，用于发布红色物体的像素坐标
-            point_pub_1 = rospy.Publisher(red_poistion_1_topic, PointStamped, queue_size=1)
-            point_pub_2 = rospy.Publisher(red_poistion_2_topic, PointStamped, queue_size=1)
+            point_pub_1 = rospy.Publisher(object_poistion_1_topic, PointStamped, queue_size=1)
+            point_pub_2 = rospy.Publisher(object_poistion_2_topic, PointStamped, queue_size=1)
                     
             # 创建并发布 PointStamped 消息
             point_msg = PointStamped()
