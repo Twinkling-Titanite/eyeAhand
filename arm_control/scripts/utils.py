@@ -1,6 +1,6 @@
 # 棋盘格尺寸和方块尺寸
-chessboard_size = (7, 4)
-square_size = 40  # 单位mm
+chessboard_size = (11, 8)
+square_size = 15  # 单位mm
 
 #是否矫正深度相机
 correct_depth_camera = False

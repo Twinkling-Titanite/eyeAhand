@@ -40,8 +40,8 @@ with open(camera_color_info_path, 'r') as f:
         if 'camera_matrix' in data:
             camera_matrix_color = np.array(data['camera_matrix']).reshape((3,3))
             
-with open(package_path + cam2world_color_tf_path, 'r') as f:
-    T_cam_color_to_world = np.array(yaml.load(f)['cam2world_tf_matrix'])
+# with open(package_path + cam2world_color_tf_path, 'r') as f:
+#     T_cam_color_to_world = np.array(yaml.safe_load(f)['cam2world_tf_matrix'])
  
 # 准备棋盘格的3D点，例如 (0,0,0), (1,0,0), (2,0,0), ..., (8,5,0)
 object_points = np.zeros((np.prod(chessboard_size), 3), np.float32)
@@ -122,12 +122,12 @@ def find_chessboard():
         T_chessboard_to_cam = np.hstack((rmat, tvec * 0.001))
         T_chessboard_to_cam = np.vstack((T_chessboard_to_cam, [0, 0, 0, 1]))
         
-        T_chessboard_to_world = np.dot(T_cam_color_to_world, T_chessboard_to_cam)
+        # T_chessboard_to_world = np.dot(T_cam_color_to_world, T_chessboard_to_cam)
         
-        # 计算棋盘格在世界坐标系中的位置
-        chessboard_in_world = np.dot(T_chessboard_to_world, np.array([0, 0, 0, 1]))[:3]
+        # 计算棋盘格在相机坐标系中的位置
+        chessboard_in_cam = np.dot(T_chessboard_to_cam, np.array([0, 0, 0, 1]))[:3]
 
-        return one_corner, chessboard_in_world, cam_idx_size
+        return one_corner, chessboard_in_cam, cam_idx_size
     else:
         return None, None, None
         

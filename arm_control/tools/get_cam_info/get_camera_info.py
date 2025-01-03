@@ -86,6 +86,8 @@ def main():
                     cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
                     imgpoints.append(corners)
                     img_result = cv2.drawChessboardCorners(img, chessboard_size, corners, ret)
+                    # 将第一个点涂黑
+                    cv2.circle(img_result, (int(corners[0][0][0]), int(corners[0][0][1])), 5, (0, 0, 0), -1)
                     cv2.imwrite(camera_color_calib_result_path + str(i) + '.jpg', img_result)
                 else:
                     print("Can't find chessboard in image " + str(i) + ".jpg")

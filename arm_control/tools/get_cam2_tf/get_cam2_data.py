@@ -100,6 +100,8 @@ def main():
             files_op.clear_folder(camera_color_img_path)
             count = files_op.get_img_num(camera_color_img_path)
             data = {'poses_end': []}
+            with open(camera_poses_end_path, 'w') as file:
+                yaml.dump(data, file)
             
         elif user_input == 'c':
             files_op.clear_folder(camera_color_result_path)

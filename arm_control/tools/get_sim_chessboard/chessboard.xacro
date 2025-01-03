@@ -2,23 +2,23 @@
 <robot name="chessboard">
 
   <!-- if you want hand to eye -->
-  <joint name="chessboard_back_joint" type="fixed">
+  <!-- <joint name="chessboard_back_joint" type="fixed">
     <origin xyz="0.2 -0.2 0.2" rpy="3.14 0 0.785" />
     <parent link="panda_link8" />
     <child link="chessboard_back" />
-  </joint>
+  </joint> -->
 
   <!-- if you want hand in eye -->
-  <!-- <joint name="chessboard_back_joint" type="fixed">
+  <joint name="chessboard_back_joint" type="fixed">
     <origin xyz="0.4 0 0.1" rpy="0 0 1.57" />
     <parent link="panda_link0" />
     <child link="chessboard_back" />
-  </joint> -->
+  </joint>
 
   <link name="chessboard_back">
     <visual>
       <geometry>
-        <mesh filename="package://arm_control/tools/get_sim_chessboard/chessboard.dae"/>
+        <mesh filename="model://checkerboard_plane/meshes/checkerboard_plane.dae"/>
       </geometry>
     </visual>
   </link>
